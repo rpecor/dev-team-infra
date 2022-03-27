@@ -35,3 +35,17 @@ resource "azurerm_resource_group" "dev-rg" {
 
   tags = local.tags
 }
+
+module "netspoke" {
+  source  = "app.terraform.io/rpecor/netspoke/azurerm"
+  version = "0.0.3"
+
+  resource_group_name = "${local.naming}-spoke_vnet-rg"
+  location = var.location
+  nsg_name = var.nsg_name
+  team_name = var.projectName
+  v_cidr   = var.cidr_range
+  v_name   = "${local.naming}-spoke_vnet"
+
+  tags = local.tags
+}
