@@ -38,7 +38,7 @@ resource "azurerm_resource_group" "dev-rg" {
 
 module "netspoke" {
   source  = "app.terraform.io/rpecor/netspoke/azurerm"
-  version = "0.0.8"
+  version = "0.0.9"
 
   resource_group_name = "${local.naming}-spoke_vnet-rg"
   location = var.location
@@ -50,4 +50,41 @@ module "netspoke" {
   subnets = var.subnets
 
   tags = local.tags
+}
+
+resource "azurerm_network_interface" "dev-nic" {
+  name                = "${local.naming}-dev-nic"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.dev-rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = module.netspoke.subnet_id[0]
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_linux_virtual_machine" "dev-vm" {
+  name                = "${local.naming}-dev-vm"
+  resource_group_name = azurerm_resource_group.dev-rg.name
+  location            = var.location
+  size                = "Standard_B1ls"
+  admin_username      = "rp-admin"
+  admin_password      = var.admin_password
+  disable_password_authentication = false
+  network_interface_ids = [
+    azurerm_network_interface.dev-nic.id,
+  ]
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
 }
