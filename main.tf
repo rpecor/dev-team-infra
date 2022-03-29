@@ -43,7 +43,7 @@ module "netspoke" {
   source  = "app.terraform.io/rpecor/netspoke/azurerm"
 
   # Versioned via Git tags. When tag is pushed, module is versioned. 
-  version = "0.0.11"
+  version = "0.0.12"
 
   resource_group_name = "${local.naming}-spoke_vnet-rg"
   location = var.location
