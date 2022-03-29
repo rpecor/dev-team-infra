@@ -21,3 +21,16 @@ variable "nsg_name" {
 variable "cidr_range" {
   type    = string
 }
+
+variable "subnets" {
+  type = list(object({
+    subnet_name = string
+    address_prefix = string
+  }
+  )
+  )
+}
+
+variable "dns_servers" {
+  type = list(string)
+}
