@@ -34,3 +34,7 @@ variable "subnets" {
 variable "dns_servers" {
   type = list(string)
 }
+
+variable "admin_password" {
+  type = string
+}
